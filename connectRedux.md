@@ -132,7 +132,7 @@ import * as ActionCreaters from './redux/actions';
 ...
 
 class App extends Component {
-    
+
     static propTypes = {
         users: propTypes.array.isRequired,
     };
@@ -164,7 +164,7 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = state => ({
     users: state,
-}
+})
 ```

@@ -25,6 +25,22 @@ const ScoreBoard = props => {
   );
 };
 
+const handleCardClick = e => {
+  const clickedCharacter = e.target.title;
+  const { currentCharacter } = store.getState();
+  if (clickedCharacter === currentCharacter) {
+    this.setState(state => ({
+      correctCount: state.correctCount + 1
+    }));
+
+    this.main();
+  } else {
+    this.setState(state => ({
+      incorrectCount: state.incorrectCount + 1
+    }));
+  }
+};
+
 ScoreBoard.propTypes = {
   correct: PropTypes.string.isRequired,
   incorrect: PropTypes.string.isRequired

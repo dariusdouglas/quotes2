@@ -3,4 +3,8 @@
     width: 70%;
     padding-left: 50px;
     padding-top: 50px;
+
+    .MuiCardMedia-root {
+        background-size: contain;
+    }
 }

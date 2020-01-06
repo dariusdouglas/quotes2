@@ -1,23 +1,20 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as ActionCreaters from './redux/actions';
 import './App.scss';
 import CardsGrid from './Components/CardsGrid/CardsGrid';
 import characterHelper from './Helpers/character-helpers';
+import api from './Helpers/api-helper';
 import QuoteContainer from './Components/QuoteContainer/QuoteContainer';
+import store from './redux/store';
 
 const url = 'https://thesimpsonsquoteapi.glitch.me/quotes?count=4';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      characters: [],
-      currentCharacter: '',
-      currentQuote: '',
-      error: '',
-      correctCount: 0,
-      incorrectCount: 0
-    };
   }
 
   componentDidMount() {
@@ -25,61 +22,66 @@ class App extends React.Component {
   }
 
   async getCharacters() {
-    try {
-      const response = await fetch(url);
-      const characters = await response.json();
-      return characters;
-    } catch (err) {
-      return err;
-    }
+    const { dispatch } = this.props;
+    const getUsers = bindActionCreators(ActionCreaters.getUsers, dispatch);
+    const response = await api.get(url);
+
+    getUsers(response);
   }
 
   getQuotePrompt() {
-    const { characters } = this.state;
-    const index = Math.floor(Math.random() * characters.length);
-    const currentMainCharacter = characters[index];
+    const { dispatch } = this.props;
+    const { characters } = store.getState();
+    const getCurrentCharacter = bindActionCreators(ActionCreaters.setCurrentCharacter, dispatch);
+    console.log(characters);
 
-    this.setState({
-      currentCharacter: currentMainCharacter.character,
-      currentQuote: currentMainCharacter.quote
-    });
+    if (characters) {
+      const index = Math.floor(Math.random() * characters.length);
+      const currentMainCharacter = characters[index];
+
+      getCurrentCharacter(currentMainCharacter);
+    }
   }
 
   handleCardClick(e) {
+    const { dispatch } = this.props;
+    const incrementCorrectCount = bindActionCreators(
+      ActionCreaters.incrementCorrectCount,
+      dispatch
+    );
+    const incrementIncorrectCount = bindActionCreators(
+      ActionCreaters.incrementIncorrectCount,
+      dispatch
+    );
     const clickedCharacter = e.target.title;
-    const { currentCharacter } = this.state;
+    const { currentCharacter } = store.getState();
     if (clickedCharacter === currentCharacter) {
-      this.setState(state => ({
-        correctCount: state.correctCount + 1
-      }));
+      incrementCorrectCount(store.getState().correctCount);
 
       this.main();
     } else {
-      this.setState(state => ({
-        incorrectCount: state.incorrectCount + 1
-      }));
+      incrementIncorrectCount(store.getState().incorrectCount);
     }
   }
 
   async main() {
-    let characters = await this.getCharacters();
+    await this.getCharacters();
+    let characters = store.getState().characters;
 
     let hasDupes = characterHelper.checkForDupes(characters);
 
     if (hasDupes) {
       while (hasDupes) {
-        characters = await this.getCharacters();
-        hasDupes = characterHelper.checkForDupes(characters);
+        await this.getCharacters();
+        hasDupes = characterHelper.checkForDupes(store.getState().characters);
       }
     }
-
-    this.setState({ characters });
 
     this.getQuotePrompt();
   }
 
   render() {
-    const { correctCount, incorrectCount, currentQuote, characters } = this.state;
+    const { correctCount, incorrectCount, currentQuote, characters } = store.getState();
     const counterInfo = { correct: correctCount, incorrect: incorrectCount };
     const quoteContainer = <QuoteContainer quote={currentQuote} counterInfo={counterInfo} />;
     const cardsGrid = <CardsGrid characters={characters} clicked={e => this.handleCardClick(e)} />;
@@ -92,4 +94,12 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  characters: state.characters,
+  currentCharacter: state.currentCharacter,
+  currentQuote: state.currentQuote,
+  correctCount: state.correctCount,
+  incorrect: state.incorrectCount
+});
+
+export default connect(mapStateToProps)(App);

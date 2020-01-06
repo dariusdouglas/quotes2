@@ -24,13 +24,7 @@ const CharacterCard = props => {
   return (
     <Card className={classes.card}>
       <CardActionArea>
-        <CardMedia
-          onClick={clicked}
-          className={classes.media}
-          image={image}
-          title={name}
-          value="test"
-        />
+        <CardMedia onClick={clicked} className={classes.media} image={image} title={name} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {name}
