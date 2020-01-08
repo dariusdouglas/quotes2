@@ -9,6 +9,7 @@ import characterHelper from './Helpers/character-helpers';
 import api from './Helpers/api-helper';
 import QuoteContainer from './Components/QuoteContainer/QuoteContainer';
 import store from './redux/store';
+import TitleBar from './Components/TitleBar/TitleBar';
 
 const url = 'https://thesimpsonsquoteapi.glitch.me/quotes?count=4';
 
@@ -33,7 +34,6 @@ class App extends React.Component {
     const { dispatch } = this.props;
     const { characters } = store.getState();
     const getCurrentCharacter = bindActionCreators(ActionCreaters.setCurrentCharacter, dispatch);
-    console.log(characters);
 
     if (characters) {
       const index = Math.floor(Math.random() * characters.length);
@@ -58,9 +58,17 @@ class App extends React.Component {
     if (clickedCharacter === currentCharacter) {
       incrementCorrectCount(store.getState().correctCount);
 
+      // move into separate function later
+      const disabledElements = document.getElementsByClassName('Mui-disabled');
+      [...disabledElements].forEach(el => {
+        el.classList.remove('Mui-disabled');
+      });
+
       this.main();
     } else {
       incrementIncorrectCount(store.getState().incorrectCount);
+      e.target.parentElement.disabled = true;
+      e.target.parentElement.classList.add('Mui-disabled');
     }
   }
 
@@ -87,6 +95,7 @@ class App extends React.Component {
     const cardsGrid = <CardsGrid characters={characters} clicked={e => this.handleCardClick(e)} />;
     return (
       <div className="App">
+        <TitleBar />
         {quoteContainer}
         {cardsGrid}
       </div>

@@ -27,7 +27,7 @@ const QuoteContainer = props => {
         <Card className={classes.card}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              {quote}
+              <p>{quote}</p>
             </Typography>
           </CardContent>
         </Card>

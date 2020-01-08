@@ -1,0 +1,12 @@
+$font: 'Comic Sans MS';
+
+.title-bar {
+    height: 70px;
+    background-color: #FFD90F;
+
+    .title {
+        font-family: $font;
+        margin: auto;
+        padding: 1%;
+    }
+}

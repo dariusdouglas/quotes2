@@ -2,43 +2,45 @@
 import React from 'react';
 import './ScoreBoard.scss';
 import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
+const useStyles = makeStyles({
+  table: {
+    minWidth: 150,
+    minHeight: 140
+  }
+});
 
 const ScoreBoard = props => {
+  const classes = useStyles();
   const { correct, incorrect } = props;
   return (
     <>
-      <table>
-        <thead>
-          <tr>
-            <td>Correct</td>
-            <td>Incorrect</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{correct}</td>
-            <td>{incorrect}</td>
-          </tr>
-        </tbody>
-      </table>
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Correct</TableCell>
+              <TableCell align="right">Incorrect</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>{correct}</TableCell>
+              <TableCell align="right">{incorrect}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   );
-};
-
-const handleCardClick = e => {
-  const clickedCharacter = e.target.title;
-  const { currentCharacter } = store.getState();
-  if (clickedCharacter === currentCharacter) {
-    this.setState(state => ({
-      correctCount: state.correctCount + 1
-    }));
-
-    this.main();
-  } else {
-    this.setState(state => ({
-      incorrectCount: state.incorrectCount + 1
-    }));
-  }
 };
 
 ScoreBoard.propTypes = {
